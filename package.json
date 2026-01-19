@@ -1,0 +1,25 @@
+{
+  "name": "astro-pu",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "A clean and elegant Astro starter template, infused with a touch of oriental aesthetics.",
+  "author": "Mountos (https://mountos.com)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mountos/astro-pu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mountos/astro-pu/issues"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.16.6",
+    "unist-util-visit": "^5.0.0"
+  }
+}
