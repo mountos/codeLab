@@ -17,8 +17,8 @@ interface Props {
 
 const { page } = Astro.props;
 
-const pageTitle = "MOUntos | Blog";
-const pageDescription = `The latest news from MOUntos Institute${page.currentPage > 1 ? ` | Page ${page.currentPage}` : ''}`;
+const pageTitle = "Mountos codeLab";
+const pageDescription = `A live repository of AI, ML, and game development projects.${page.currentPage > 1 ? ` | Page ${page.currentPage}` : ''}`;
 ---
 <Layout title={pageTitle} description={pageDescription}>
 	<section class="post-list">
@@ -42,8 +42,9 @@ const pageDescription = `The latest news from MOUntos Institute${page.currentPag
 	.post-list h2 {
 		font-size: 2rem;
 		margin-bottom: 2rem;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid var(--color-border);
 		padding-bottom: 1rem;
+		color: var(--color-text);
 	}
 	.post-list ul {
 		list-style: none;
@@ -55,14 +56,16 @@ const pageDescription = `The latest news from MOUntos Institute${page.currentPag
 		justify-content: space-between;
 		align-items: center;
 		padding: 1rem;
+		border: 1px solid transparent;
 		border-radius: 8px;
 		text-decoration: none;
-		color: #333;
-		transition: background-color 0.2s ease;
+		color: var(--color-text);
+		transition: all 0.2s ease;
 		margin-bottom: 0.5rem;
 	}
 	.post-list li a:hover {
-		background-color: #f5f5f5;
+		background-color: #003300;
+		border-color: var(--color-border);
 	}
 	.post-title {
 		font-size: 1.2rem;
@@ -70,7 +73,7 @@ const pageDescription = `The latest news from MOUntos Institute${page.currentPag
 	}
 	.post-date {
 		font-size: 0.9rem;
-		color: #888;
+		color: var(--color-muted);
 		font-variant-numeric: tabular-nums;
 	}
 </style>
