@@ -26,6 +26,7 @@ const isHomepage = Astro.url.pathname === '/';
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 		<ViewTransitions />
+		<slot name="head" />
 	</head>
 	<body>
 		<Header isHomepage={isHomepage} siteTitle={title} siteDescription={description} />
