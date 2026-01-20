@@ -1,59 +1,135 @@
 ---
-title: "Welcome to Astro Template PU 璞"
-description: "This is an example article introducing the features of this template. Here you can learn how to write your content using Markdown."
-pubDate: 2026-01-05T12:00:00Z
-categories: ["Tutorial"]
-tags: ["Astro", "Template", "Markdown"]
-heroImage: "../../assets/shared/MOUNTOS-Feature-HeroImage.png"
+title: "Managing AI Agent State with a Flexible TrajectoryManager"
+description: "A deep dive into a Python class designed to manage the state and history of an AI agent's operations, with support for multiple storage backends."
+pubDate: 2026-01-21T00:00:00Z
+categories: ["AI Agentics", "Python"]
+tags: ["State Management", "AI", "Architecture", "Storage"]
 ---
 
-Welcome to your new website! This is a demo page built using the [Mountos Astro Basic Template: PU 璞](https://pu.code.mountos.com). You are free to edit or delete this article.
+### LOG_ENTRY: 20260121
 
-The purpose of this article is to showcase the various content formats you can write using Markdown, as well as the built-in features of this template.
+### SUBJECT: TrajectoryManager Implementation
 
-## This is an H2 Heading
+In the development of autonomous AI agents, managing state and history—what we call a 'trajectory'—is a critical architectural challenge. An agent's trajectory is the complete, ordered sequence of its operations, observations, and state changes. For debugging, analysis, and even for the agent's own long-term planning, a robust trajectory management system is essential.
 
-You can create articles by writing Markdown. Astro will automatically convert it to HTML. What you see is what you get, it's very simple.
+Today, we're open-sourcing a core component of our agent framework: the `TrajectoryManager`.
 
-### This is an H3 Heading
+### // Core Design Principles
 
-You can have different levels of headings to organize your content. This is very helpful for SEO and readability.
+The `TrajectoryManager` was designed with two primary goals:
 
-#### Lists
+1.  **Flexibility:** It should not be tied to a single storage mechanism. Local files are great for simple agents, but production systems might require a more robust backend like Redis.
+2.  **Simplicity:** The interface for the agent to interact with its own history should be simple and intuitive (`add_step`, `get_trajectory`).
 
-*   This is an unordered list item
-*   You can have many items
-    *   Even nested lists
+### // The Code
 
-1.  This is an ordered list
-2.  The order will be automatically calculated
-3.  Great for writing tutorials
+Below is the implementation. It uses a base `BaseStorage` class to define the interface and `FileStorage` for a concrete, file-based implementation.
 
-#### Blockquotes
+> The system is initialized with a `trajectory_id` and a storage backend. If no backend is provided, it defaults to `FileStorage`. This allows for easy testing and deployment.
 
-Sometimes you want to quote someone, you can use blockquote.
+```python
+import json
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-> This is a blockquote. It will be displayed with special styling to emphasize the importance or source of the text.
+# --- Storage Backend Interfaces ---
 
-#### Code Blocks
+class BaseStorage:
+    """Base class for trajectory storage."""
+    def save(self, trajectory: List[Dict[str, Any]]) -> None:
+        raise NotImplementedError
 
-For technical blogs, code blocks are indispensable. This template has prepared elegant syntax highlighting for you.
+    def load(self) -> List[Dict[str, Any]]:
+        raise NotImplementedError
 
-```javascript
-// This is a JavaScript code example
-function greet(name) {
-  console.log(`Hello, ${name}!`);
-}
+class FileStorage(BaseStorage):
+    """File-based storage for a single trajectory."""
+    def __init__(self, file_path: Union[str, Path]):
+        self.file_path = Path(file_path)
+        # Ensure the directory exists
+        self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
-greet('Astro');
+    def save(self, trajectory: List[Dict[str, Any]]) -> None:
+        with open(self.file_path, 'w') as f:
+            json.dump(trajectory, f, indent=4)
+
+    def load(self) -> List[Dict[str, Any]]:
+        if not self.file_path.exists():
+            return []
+        with open(self.file_path, 'r') as f:
+            return json.load(f)
+
+# --- Trajectory Manager ---
+
+class TrajectoryManager:
+    """
+    Manages an agent's trajectory, handling storage and retrieval.
+    """
+    def __init__(self, trajectory_id: str, storage: Optional[BaseStorage] = None):
+        self.trajectory_id = trajectory_id
+        
+        if storage is None:
+            # Default to a file-based storage in a local '.trajectories' directory
+            file_path = Path(".trajectories") / f"{self.trajectory_id}.json"
+            self.storage = FileStorage(file_path)
+        else:
+            self.storage = storage
+            
+        self.trajectory = self.storage.load()
+
+    def add_step(self, step_name: str, details: Dict[str, Any]) -> None:
+        """
+        Adds a new step to the trajectory and saves it.
+
+        Args:
+            step_name: The name or type of the step (e.g., 'thought', 'command').
+            details: A dictionary containing the content of the step.
+        """
+        step = {"step": step_name, **details}
+        self.trajectory.append(step)
+        self.storage.save(self.trajectory)
+
+    def get_trajectory(self) -> List[Dict[str, Any]]:
+        """
+        Returns the full trajectory.
+        """
+        return self.trajectory
+
+    def get_last_step(self) -> Optional[Dict[str, Any]]:
+        """
+        Returns the most recent step in the trajectory.
+        """
+        if not self.trajectory:
+            return None
+        return self.trajectory[-1]
+
+    def clear(self) -> None:
+        """
+        Clears the trajectory from memory and storage.
+        """
+        self.trajectory = []
+        self.storage.save(self.trajectory)
 ```
 
-#### Images
+### // Usage Example
 
-Inserting images in Markdown is also very simple.
+Using the manager is straightforward:
 
-![This is an ALT description for the image](../../assets/shared/MOUNTOS-Feature-HeroImage.png)
+```python
+# 1. Initialize the manager for a specific agent run
+session_id = "agent-run-001"
+traj_manager = TrajectoryManager(session_id)
 
----
+# 2. Add steps as the agent operates
+traj_manager.add_step("thought", {"text": "I need to find out the capital of France."})
+traj_manager.add_step("command", {"name": "web_search", "query": "capital of France"})
+traj_manager.add_step("observation", {"result": "The capital of France is Paris."})
 
-Congratulations! You have now mastered the basics. Start writing your own content and share your ideas with the world.
+# 3. Retrieve the history at any point
+full_history = traj_manager.get_trajectory()
+print(json.dumps(full_history, indent=2))
+```
+
+This component provides a solid foundation for more complex agent behaviors. By swapping the `storage` backend, it can be adapted for different production environments without changing the agent's core logic.
+
+### END_OF_LOG

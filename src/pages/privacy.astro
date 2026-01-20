@@ -2,37 +2,39 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout 
-  title="Privacy Policy | Mountos xAstro Template"
-  description="This is a general privacy policy template. Please be sure to modify it according to your website's actual practices."
+  title="Privacy Policy | Mountos codeLab"
+  description="Our data protocol."
 >
   <div class="static-page">
-    <h1>Privacy Policy</h1>
+    <h1>[ Privacy_Protocol ]</h1>
     <div class="content">
       <p>
-        <strong>Please note: This is a template page. You should consult with a legal professional and write your own privacy policy based on your website's specific practices.</strong>
-      </p>
-      <p>
-        Your privacy is important to us. This Privacy Policy aims to explain how this website collects, uses, shares, and protects your personal information.
+        &gt; System log started. This document outlines the data protocol for this node (mountos.codelab).
       </p>
       
-      <h2>Information Collection</h2>
+      <h2>// Data Footprint</h2>
       <p>
-        When you visit this website, we may collect information you voluntarily provide and non-personally identifiable information automatically collected through cookies. Please detail the types of information you collect here.
+        &gt; We run a minimal operation. We do not require user registration. We do not actively collect personal data. Your IP address and user agent may be logged by the server for security and diagnostic purposes. This is standard procedure.
       </p>
 
-      <h2>Information Use</h2>
+      <h2>// Cookies_&_Trackers</h2>
       <p>
-        The information we collect will be used to improve the website experience, respond to your requests, etc. Please detail how your information is used here.
+        &gt; This site is static. We do not use cookies for tracking or advertising. If any client-side scripts are active, they are for functionality (e.g., search) and not for surveillance. We have no interest in your browsing history.
       </p>
 
-      <h2>Cookie Policy</h2>
+      <h2>// Third-Party_Comms</h2>
       <p>
-        This website uses cookies. Please describe your website's cookie usage here.
+        &gt; We do not share data with third parties. There is no data to share. All processing is done on-node or on your local client.
       </p>
 
-      <h2>Contact Us</h2>
+      <h2>// Protocol_Updates</h2>
       <p>
-        If you have any questions about this Privacy Policy, please feel free to contact us.
+        &gt; This protocol is subject to change without notice. We are not a corporation. We are a lab. Assume nothing.
+      </p>
+
+      <h2>// End_of_Transmission</h2>
+      <p>
+        &gt; Questions can be sent to `/dev/null`.
       </p>
     </div>
   </div>
@@ -47,6 +49,7 @@ import Layout from '../layouts/Layout.astro';
     font-size: 2.8rem;
     margin-bottom: 2rem;
     text-align: center;
+    text-shadow: 0 0 8px var(--color-text);
   }
   .content {
     font-size: 1.1rem;
@@ -57,7 +60,11 @@ import Layout from '../layouts/Layout.astro';
 		margin-top: 3rem;
 		margin-bottom: 1.5rem;
 		line-height: 1.3;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid var(--color-border);
 		padding-bottom: .5rem;
+    text-shadow: 0 0 5px var(--color-text);
+  }
+  .content p {
+    margin-bottom: 1rem;
   }
 </style>
