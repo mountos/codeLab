@@ -28,7 +28,7 @@ const isHomepage = Astro.url.pathname === '/';
 		<ViewTransitions />
 	</head>
 	<body>
-		<Header isHomepage={isHomepage} />
+		<Header isHomepage={isHomepage} siteTitle={title} siteDescription={description} />
 		<slot name="hero" />
 		<main class="main-content">
 			<slot />
