@@ -1,0 +1,532 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout 
+  title="GhostURL - Zero-Width URL Generator | Mountos codeLab"
+  description="A hacker-style online tool to convert URLs into unclickable versions with zero-width spaces. Free, secure, and client-side."
+>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" slot="head-end">
+
+  <div class="container">
+    <div class="tool-title">
+        <h2>GhostURL Generator</h2>
+        <div class="subtitle">Zero-Width Space URL Converter</div>
+    </div>
+    
+    <div class="ascii-art">
+        <pre>
+   _____ _               _    _   _ _____ _      
+  / ____| |             | |  | | | |_   _| |     
+ | |  __| |__   ___  ___| | _| | | | | | | |     
+ | | |_ | '_ \ / _ \/ __| |/ / | | | | | | |     
+ | |__| | | | |  __/ (__|   <| |_| |_| |_| |____ 
+  \_____|_| |_|\___|\___|_|\_\\___/|_____|______| 
+        </pre>
+    </div>
+    
+    <div class="input-section">
+        <label class="section-label">INPUT URL</label>
+        <textarea id="inputUrl" class="input-area" placeholder="PASTE YOUR URL HERE (e.g., https://example.com)"></textarea>
+        <div class="char-count">
+            CHARACTERS: <span id="charCount">0</span>
+        </div>
+    </div>
+    
+    <button id="convertBtn" class="convert-btn">
+        <i class="fas fa-terminal"></i> CONVERT TO GHOST URL
+    </button>
+    
+    <div class="output-section">
+        <label class="section-label">GHOST URL OUTPUT</label>
+        <div class="output-area" id="outputUrl">
+            <span class="blinking-cursor">_</span>
+        </div>
+        <div class="copy-notice" id="copyNotice">COPIED TO CLIPBOARD!</div>
+    </div>
+    
+    <div class="instructions">
+        <h3>HOW IT WORKS / 使用說明</h3>
+        
+        <div class="instruction-block">
+            <h4>WHAT IS GHOSTURL? / 什麼是GhostURL?</h4>
+            <p>GhostURL 是一個在線工具，可以在URL的每個字符之間插入零寬空格 (U+200B)，使連結看起來正常但無法被點擊或檢測。</p>
+            <p class="english">GhostURL is an online tool that inserts zero-width spaces (U+200B) between each character of a URL, making it appear normal but unclickable and undetectable by most platforms.</p>
+        </div>
+        
+        <div class="instruction-block">
+            <h4>TECHNICAL PRINCIPLE / 技術原理</h4>
+            <p>零寬空格是一個不可見的Unicode字符，它不會在視覺上佔用空間，但會破壞文本的自動檢測功能。</p>
+            <p class="english">Zero-width space is an invisible Unicode character that doesn't take up visual space but breaks automatic text detection.</p>
+            
+            <div class="example-box">
+                <div class="example-title">EXAMPLE / 範例:</div>
+                <pre>
+Original URL:  https://example.com
+GhostURL:      h&#8203;t&#8203;t&#8203;p&#8203;s&#8203;:&#8203;/&#8203;/&#8203;e&#8203;x&#8203;a&#8203;m&#8203;p&#8203;l&#8203;e&#8203;.&#8203;c&#8203;o&#8203;m
+                </pre>
+            </div>
+        </div>
+        
+        <div class="instruction-block">
+            <h4>USE CASES / 使用場景</h4>
+            <p>1. 在社群媒體上分享連結而不希望被自動轉換為可點擊連結</p>
+            <p class="english">1. Share links on social media without automatic conversion to clickable links</p>
+            
+            <p>2. 避免自動化系統檢測和過濾特定URL</p>
+            <p class="english">2. Avoid detection and filtering of specific URLs by automated systems</p>
+            
+            <p>3. 在論壇上分享連結而不觸發自動連結預覽</p>
+            <p class="english">3. Share links on forums without triggering automatic link previews</p>
+        </div>
+        
+        <div class="instruction-block">
+            <h4>PRIVACY & SECURITY / 隱私與安全</h4>
+            <p>所有處理均在您的瀏覽器中完成，無需上傳到伺服器，確保您的隱私安全。</p>
+            <p class="english">All processing is done in your browser, no upload to server, ensuring your privacy and security.</p>
+        </div>
+    </div>
+  </div>
+</Layout>
+<style>
+  .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: rgba(0, 20, 0, 0.8);
+      border-radius: 0;
+      border: 1px solid #00FF00;
+      box-shadow: 
+          0 0 15px rgba(0, 255, 0, 0.3),
+          inset 0 0 20px rgba(0, 255, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      margin-top: 2rem;
+  }
+  
+  .container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00FF00, transparent);
+      animation: scanline 10s linear infinite;
+  }
+  
+  @keyframes scanline {
+      0% { top: 0; }
+      100% { top: 100%; }
+  }
+
+  .tool-title {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #00FF00;
+      background-color: rgba(0, 30, 0, 0.7);
+      position: relative;
+  }
+  
+  .tool-title h2 {
+      font-size: 2rem;
+      color: #00FF00;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+  }
+  
+  .tool-title .subtitle {
+      color: #00AA00;
+      margin-top: 10px;
+      font-size: 1.1rem;
+  }
+  
+  .blinking-cursor {
+      animation: blink 1s infinite;
+      color: #00FF00;
+  }
+  
+  @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+  }
+  
+  .input-section, .output-section {
+      margin-bottom: 40px;
+  }
+  
+  .section-label {
+      display: block;
+      color: #00FF00;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+  }
+  
+  .section-label::before {
+      content: "> ";
+      color: #00FF00;
+  }
+  
+  .input-area {
+      width: 100%;
+      min-height: 120px;
+      padding: 20px;
+      background-color: rgba(0, 10, 0, 0.9);
+      border: 1px solid #00AA00;
+      border-radius: 0;
+      color: #00FF00;
+      font-size: 1.1rem;
+      resize: vertical;
+      transition: all 0.3s;
+      font-family: 'Courier New', monospace;
+  }
+  
+  .input-area:focus {
+      outline: none;
+      border-color: #00FF00;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  }
+  
+  .convert-btn {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      background-color: rgba(0, 30, 0, 0.9);
+      color: #00FF00;
+      border: 1px solid #00FF00;
+      border-radius: 0;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 30px 0;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-family: 'Courier New', monospace;
+      position: relative;
+      overflow: hidden;
+  }
+  
+  .convert-btn:hover {
+      background-color: rgba(0, 50, 0, 0.9);
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+      transform: translateY(-2px);
+  }
+  
+  .convert-btn:active {
+      transform: translateY(0);
+  }
+  
+  .convert-btn::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s;
+  }
+  
+  .convert-btn:hover::after {
+      left: 100%;
+  }
+  
+  .output-area {
+      width: 100%;
+      min-height: 120px;
+      padding: 20px;
+      background-color: rgba(0, 15, 0, 0.9);
+      border: 1px dashed #00FF00;
+      border-radius: 0;
+      color: #00FF00;
+      font-size: 1.1rem;
+      word-break: break-all;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Courier New', monospace;
+  }
+  
+  .output-area:hover {
+      background-color: rgba(0, 25, 0, 0.9);
+      box-shadow: inset 0 0 15px rgba(0, 255, 0, 0.2);
+  }
+  
+  .copy-notice {
+      position: absolute;
+      top: -35px;
+      right: 0;
+      background-color: #003300;
+      color: #00FF00;
+      padding: 5px 15px;
+      border: 1px solid #00FF00;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+  }
+  
+  .copy-notice.show {
+      opacity: 1;
+  }
+  
+  .char-count {
+      text-align: right;
+      margin-top: 5px;
+      color: #00AA00;
+      font-size: 0.9rem;
+  }
+  
+  .instructions {
+      background-color: rgba(0, 20, 0, 0.8);
+      padding: 25px;
+      border: 1px solid #00AA00;
+      margin-top: 40px;
+  }
+  
+  .instructions h3 {
+      color: #00FF00;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      border-bottom: 1px solid #00AA00;
+      padding-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+  }
+  
+  .instructions h3::before {
+      content: "[ ";
+      color: #00FF00;
+  }
+  
+  .instructions h3::after {
+      content: " ]";
+      color: #00FF00;
+  }
+  
+  .instruction-block {
+      margin-bottom: 25px;
+  }
+  
+  .instruction-block h4 {
+      color: #00FF00;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+  }
+  
+  .instruction-block p {
+      color: #00CC00;
+      margin-bottom: 10px;
+      line-height: 1.7;
+  }
+  
+  .instruction-block p.english {
+      color: #00AA00;
+      font-style: italic;
+      border-left: 2px solid #00AA00;
+      padding-left: 15px;
+  }
+  
+  .example-box {
+      background-color: rgba(0, 10, 0, 0.9);
+      border: 1px solid #00AA00;
+      padding: 15px;
+      margin: 15px 0;
+      overflow-x: auto;
+  }
+  
+  .example-box pre {
+      color: #00FF00;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+  }
+  
+  .example-title {
+      color: #00FF00;
+      margin-bottom: 5px;
+      font-weight: bold;
+  }
+  
+  .ascii-art {
+      color: #00AA00;
+      text-align: center;
+      margin: 20px 0;
+      font-size: 0.7rem;
+      line-height: 1.2;
+      opacity: 0.7;
+  }
+  
+  @media (max-width: 768px) {
+      .container {
+          padding: 20px;
+      }
+      
+      .tool-title h2 {
+          font-size: 1.5rem;
+      }
+      
+      .input-area, .output-area {
+          min-height: 100px;
+          font-size: 1rem;
+      }
+  }
+  
+  .glitch-text {
+      position: relative;
+      display: inline-block;
+  }
+  
+  .glitch-text::before,
+  .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+  }
+  
+  .glitch-text::before {
+      animation: glitch-1 5s infinite linear alternate-reverse;
+      left: 2px;
+      text-shadow: -2px 0 #FF00FF;
+      clip: rect(24px, 550px, 90px, 0);
+      opacity: 0.8;
+  }
+  
+  .glitch-text::after {
+      animation: glitch-2 3s infinite linear alternate-reverse;
+      left: -2px;
+      text-shadow: -2px 0 #00FFFF;
+      clip: rect(85px, 550px, 140px, 0);
+      opacity: 0.8;
+  }
+  
+  @keyframes glitch-1 {
+      0% { clip: rect(20px, 9999px, 85px, 0); }
+      5% { clip: rect(15px, 9999px, 90px, 0); }
+      10% { clip: rect(30px, 9999px, 75px, 0); }
+      15% { clip: rect(40px, 9999px, 65px, 0); }
+      20% { clip: rect(55px, 9999px, 50px, 0); }
+      100% { clip: rect(10px, 9999px, 95px, 0); }
+  }
+  
+  @keyframes glitch-2 {
+      0% { clip: rect(85px, 9999px, 140px, 0); }
+      5% { clip: rect(80px, 9999px, 145px, 0); }
+      10% { clip: rect(95px, 9999px, 130px, 0); }
+      15% { clip: rect(105px, 9999px, 120px, 0); }
+      20% { clip: rect(120px, 9999px, 105px, 0); }
+      100% { clip: rect(75px, 9999px, 150px, 0); }
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const inputUrl = document.getElementById('inputUrl');
+      const convertBtn = document.getElementById('convertBtn');
+      const outputUrl = document.getElementById('outputUrl');
+      const copyNotice = document.getElementById('copyNotice');
+      const charCount = document.getElementById('charCount');
+      
+      if (!inputUrl) return; // Exit if elements are not on the page
+
+      // Update character count
+      inputUrl.addEventListener('input', function() {
+          charCount.textContent = inputUrl.value.length;
+      });
+      
+      // Convert button click event
+      convertBtn.addEventListener('click', function() {
+          const url = inputUrl.value.trim();
+          
+          if (!url) {
+              outputUrl.innerHTML = "<span style='color:#FF5555'>ERROR: NO INPUT DETECTED</span>";
+              outputUrl.style.borderColor = "#FF5555";
+              return;
+          }
+          
+          // Reset output style
+          outputUrl.style.borderColor = "#00FF00";
+          outputUrl.style.color = "#00FF00";
+          
+          // Use split and join to insert zero-width spaces
+          const ghostUrl = url.split('').join('\u200B');
+          
+          outputUrl.textContent = ghostUrl;
+          outputUrl.setAttribute('data-ghosturl', ghostUrl);
+          
+          // Visual feedback
+          convertBtn.innerHTML = '<i class="fas fa-check"></i> CONVERSION SUCCESSFUL';
+          convertBtn.style.backgroundColor = 'rgba(0, 50, 0, 0.9)';
+          
+          setTimeout(() => {
+              convertBtn.innerHTML = '<i class="fas fa-terminal"></i> CONVERT TO GHOST URL';
+              convertBtn.style.backgroundColor = '';
+          }, 2000);
+      });
+      
+      // Click-to-copy functionality
+      outputUrl.addEventListener('click', function() {
+          const ghostUrl = outputUrl.getAttribute('data-ghosturl') || outputUrl.textContent;
+          
+          if (!ghostUrl || ghostUrl.includes("ERROR") || ghostUrl.includes("<span")) {
+              return;
+          }
+          
+          // Use Clipboard API
+          navigator.clipboard.writeText(ghostUrl).then(() => {
+              // Show copy notice
+              copyNotice.classList.add('show');
+              
+              setTimeout(() => {
+                  copyNotice.classList.remove('show');
+              }, 2000);
+              
+              // Visual feedback
+              outputUrl.style.backgroundColor = 'rgba(0, 40, 0, 0.9)';
+              outputUrl.style.boxShadow = 'inset 0 0 20px rgba(0, 255, 0, 0.4)';
+              
+              setTimeout(() => {
+                  outputUrl.style.backgroundColor = '';
+                  outputUrl.style.boxShadow = '';
+              }, 500);
+          }).catch(err => {
+              console.error('Copy failed: ', err);
+              // Fallback for older browsers
+              const textArea = document.createElement('textarea');
+              textArea.value = ghostUrl;
+              document.body.appendChild(textArea);
+              textArea.select();
+              try {
+                document.execCommand('copy');
+                copyNotice.classList.add('show');
+                setTimeout(() => copyNotice.classList.remove('show'), 2000);
+              } catch (e) {
+                console.error('Fallback copy failed', e);
+              }
+              document.body.removeChild(textArea);
+          });
+      });
+      
+      // Set default example
+      inputUrl.value = "https://code.mountos.com/tools/ghosturl";
+      charCount.textContent = inputUrl.value.length;
+      
+      // Simulate terminal startup effect
+      setTimeout(() => {
+          convertBtn.click();
+      }, 500);
+      
+      // Add keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+          // Ctrl+Enter to convert
+          if (e.ctrlKey && e.key === 'Enter') {
+              e.preventDefault();
+              convertBtn.click();
+          }
+      });
+  });
+</script>
