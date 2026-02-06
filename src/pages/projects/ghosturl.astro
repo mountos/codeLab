@@ -424,109 +424,99 @@ GhostURL:      h&#8203;t&#8203;t&#8203;p&#8203;s&#8203;:&#8203;/&#8203;/&#8203;e
   }
 </style>
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const inputUrl = document.getElementById('inputUrl');
-      const convertBtn = document.getElementById('convertBtn');
-      const outputUrl = document.getElementById('outputUrl');
-      const copyNotice = document.getElementById('copyNotice');
-      const charCount = document.getElementById('charCount');
-      
-      if (!inputUrl) return; // Exit if elements are not on the page
+  function setupGhostUrl() {
+    const inputUrl = document.getElementById('inputUrl');
+    const convertBtn = document.getElementById('convertBtn');
+    const outputUrl = document.getElementById('outputUrl');
+    const copyNotice = document.getElementById('copyNotice');
+    const charCount = document.getElementById('charCount');
+    
+    if (!convertBtn || !inputUrl || !outputUrl) return;
 
-      // Update character count
-      inputUrl.addEventListener('input', function() {
-          charCount.textContent = inputUrl.value.length;
-      });
+    // Function to handle the conversion
+    const handleConvert = () => {
+      const url = inputUrl.value.trim();
       
-      // Convert button click event
-      convertBtn.addEventListener('click', function() {
-          const url = inputUrl.value.trim();
+      if (!url) {
+          outputUrl.innerHTML = "<span style='color:#FF5555'>ERROR: NO INPUT DETECTED</span>";
+          outputUrl.style.borderColor = "#FF5555";
+          return;
+      }
+      
+      outputUrl.style.borderColor = "#00FF00";
+      outputUrl.style.color = "#00FF00";
+      
+      const ghostUrl = url.split('').join('-');
+      
+      outputUrl.textContent = ghostUrl;
+      outputUrl.setAttribute('data-ghosturl', ghostUrl);
+      
+      convertBtn.innerHTML = '<i class="fas fa-check"></i> CONVERSION SUCCESSFUL';
+      convertBtn.style.backgroundColor = 'rgba(0, 50, 0, 0.9)';
+      
+      setTimeout(() => {
+          convertBtn.innerHTML = '<i class="fas fa-terminal"></i> CONVERT TO GHOST URL';
+          convertBtn.style.backgroundColor = '';
+      }, 2000);
+    };
+
+    // Function to handle copying
+    const handleCopy = () => {
+      const ghostUrl = outputUrl.getAttribute('data-ghosturl') || outputUrl.textContent;
+      
+      if (!ghostUrl || ghostUrl.includes("ERROR") || ghostUrl.includes("<span")) {
+          return;
+      }
+      
+      navigator.clipboard.writeText(ghostUrl).then(() => {
+          copyNotice.classList.add('show');
+          setTimeout(() => copyNotice.classList.remove('show'), 2000);
           
-          if (!url) {
-              outputUrl.innerHTML = "<span style='color:#FF5555'>ERROR: NO INPUT DETECTED</span>";
-              outputUrl.style.borderColor = "#FF5555";
-              return;
-          }
-          
-          // Reset output style
-          outputUrl.style.borderColor = "#00FF00";
-          outputUrl.style.color = "#00FF00";
-          
-          // Use split and join to insert zero-width spaces
-          const ghostUrl = url.split('').join('\u200B');
-          
-          outputUrl.textContent = ghostUrl;
-          outputUrl.setAttribute('data-ghosturl', ghostUrl);
-          
-          // Visual feedback
-          convertBtn.innerHTML = '<i class="fas fa-check"></i> CONVERSION SUCCESSFUL';
-          convertBtn.style.backgroundColor = 'rgba(0, 50, 0, 0.9)';
-          
+          outputUrl.style.backgroundColor = 'rgba(0, 40, 0, 0.9)';
+          outputUrl.style.boxShadow = 'inset 0 0 20px rgba(0, 255, 0, 0.4)';
           setTimeout(() => {
-              convertBtn.innerHTML = '<i class="fas fa-terminal"></i> CONVERT TO GHOST URL';
-              convertBtn.style.backgroundColor = '';
-          }, 2000);
-      });
-      
-      // Click-to-copy functionality
-      outputUrl.addEventListener('click', function() {
-          const ghostUrl = outputUrl.getAttribute('data-ghosturl') || outputUrl.textContent;
-          
-          if (!ghostUrl || ghostUrl.includes("ERROR") || ghostUrl.includes("<span")) {
-              return;
+              outputUrl.style.backgroundColor = '';
+              outputUrl.style.boxShadow = '';
+          }, 500);
+      }).catch(err => {
+          console.error('Copy failed: ', err);
+          const textArea = document.createElement('textarea');
+          textArea.value = ghostUrl;
+          document.body.appendChild(textArea);
+          textArea.select();
+          try {
+            document.execCommand('copy');
+            copyNotice.classList.add('show');
+            setTimeout(() => copyNotice.classList.remove('show'), 2000);
+          } catch (e) {
+            console.error('Fallback copy failed', e);
           }
-          
-          // Use Clipboard API
-          navigator.clipboard.writeText(ghostUrl).then(() => {
-              // Show copy notice
-              copyNotice.classList.add('show');
-              
-              setTimeout(() => {
-                  copyNotice.classList.remove('show');
-              }, 2000);
-              
-              // Visual feedback
-              outputUrl.style.backgroundColor = 'rgba(0, 40, 0, 0.9)';
-              outputUrl.style.boxShadow = 'inset 0 0 20px rgba(0, 255, 0, 0.4)';
-              
-              setTimeout(() => {
-                  outputUrl.style.backgroundColor = '';
-                  outputUrl.style.boxShadow = '';
-              }, 500);
-          }).catch(err => {
-              console.error('Copy failed: ', err);
-              // Fallback for older browsers
-              const textArea = document.createElement('textarea');
-              textArea.value = ghostUrl;
-              document.body.appendChild(textArea);
-              textArea.select();
-              try {
-                document.execCommand('copy');
-                copyNotice.classList.add('show');
-                setTimeout(() => copyNotice.classList.remove('show'), 2000);
-              } catch (e) {
-                console.error('Fallback copy failed', e);
-              }
-              document.body.removeChild(textArea);
-          });
+          document.body.removeChild(textArea);
       });
-      
-      // Set default example
+    };
+
+    // --- Attach event listeners ---
+    inputUrl.addEventListener('input', () => {
+      charCount.textContent = inputUrl.value.length;
+    });
+    
+    convertBtn.addEventListener('click', handleConvert);
+    outputUrl.addEventListener('click', handleCopy);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'Enter') {
+            e.preventDefault();
+            handleConvert();
+        }
+    });
+
+    // --- Initial state ---
+    if (inputUrl.value === "") {
       inputUrl.value = "https://code.mountos.com/tools/ghosturl";
       charCount.textContent = inputUrl.value.length;
-      
-      // Simulate terminal startup effect
-      setTimeout(() => {
-          convertBtn.click();
-      }, 500);
-      
-      // Add keyboard shortcuts
-      document.addEventListener('keydown', function(e) {
-          // Ctrl+Enter to convert
-          if (e.ctrlKey && e.key === 'Enter') {
-              e.preventDefault();
-              convertBtn.click();
-          }
-      });
-  });
+      setTimeout(handleConvert, 500);
+    }
+  }
+
+  document.addEventListener('astro:page-load', setupGhostUrl);
 </script>
