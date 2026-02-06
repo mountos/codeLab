@@ -446,7 +446,7 @@ GhostURL:      h&#8203;t&#8203;t&#8203;p&#8203;s&#8203;:&#8203;/&#8203;/&#8203;e
       outputUrl.style.borderColor = "#00FF00";
       outputUrl.style.color = "#00FF00";
       
-      const ghostUrl = url.split('').join('-');
+      const ghostUrl = url.split('').join('\u200B');
       
       outputUrl.textContent = ghostUrl;
       outputUrl.setAttribute('data-ghosturl', ghostUrl);
