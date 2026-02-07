@@ -6,9 +6,7 @@ const { frontmatter, headings } = Astro.props;
 const hasHeadings = headings.filter(h => h.depth > 1 && h.depth < 4).length > 0;
 const primaryCategory = frontmatter.categories?.[0];
 ---
-<Layout>
-  <title slot="head">{`${frontmatter.title} | Mountos codeLab`}</title>
-
+<Layout title={`${frontmatter.title} | Mountos codeLab`}>
   <div class="blog-container">
     <article class="post">
       <header class="post-header">
