@@ -1,20 +1,12 @@
 ---
-const { 
-  isHomepage = false,
-	siteTitle, 
-	siteDescription
-} = Astro.props;
+// No props are needed, the header is now static.
 ---
 <header>
   <div class="header-container">
     <div class="site-branding">
       <a href="/">
-        {isHomepage ? (
-          <h1 class="site-title">{siteTitle}</h1>
-        ) : (
-          <div class="site-title">{siteTitle}</div>
-        )}
-        <p class="site-description">{siteDescription}</p>
+        <div class="site-title">Mountos codeLab</div>
+        <p class="site-description">This is our public-facing terminal and R&D lab.</p>
       </a>
     </div>
     <nav class="nav-buttons">

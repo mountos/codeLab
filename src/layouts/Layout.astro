@@ -29,7 +29,7 @@ const isHomepage = Astro.url.pathname === '/';
 		<slot name="head" />
 	</head>
 	<body>
-		<Header isHomepage={isHomepage} siteTitle={title} siteDescription={description} />
+		<Header />
 		<slot name="hero" />
 		<main class="main-content">
 			<slot />
