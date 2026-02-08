@@ -79,6 +79,18 @@ const relatedPosts = allPosts
       </div>
     </div>
   }
+  <!-- Comment Section -->
+  <div class="comment-container">
+    <div class="comment-inner">
+      <h2 class="comment-title">Comments</h2>
+      <iframe
+        src="https://cf-comment.mountos.workers.dev/embed/area/picotime?theme=dark&lang=en"
+        title="Comments"
+        class="comment-iframe"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
 </Layout>
 
 <style>
@@ -263,5 +275,30 @@ const relatedPosts = allPosts
     font-weight: 600;
     margin: 0;
     line-height: 1.4;
+  }
+
+  /* --- Comment Section --- */
+  .comment-container {
+    border-top: 1px solid var(--color-border);
+    margin-top: 4rem;
+    padding: 4rem 0;
+  }
+  .comment-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .comment-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .comment-iframe {
+    width: 100%;
+    min-height: 400px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background-color: transparent;
   }
 </style>
