@@ -18,15 +18,13 @@ const relatedPosts = allPosts
 <Layout title={`${frontmatter.title} | Mountos codeLab`}>
   <div class="blog-container">
     <article class="post">
-      <header class="post-header">
-        {primaryCategory && <a href={`/categories/${primaryCategory.toLowerCase()}`} class="post-category">{primaryCategory}</a>}
-        <h1 class="post-title">{frontmatter.title}</h1>
-        <div class="post-meta">
-          <time datetime={frontmatter.pubDate.toISOString()}>
-            {new Date(frontmatter.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </time>
-        </div>
-      </header>
+      {primaryCategory && <a href={`/categories/${primaryCategory.toLowerCase()}`} class="post-category">{primaryCategory}</a>}
+      <h1 class="post-title">{frontmatter.title}</h1>
+      <div class="post-meta">
+        <time datetime={frontmatter.pubDate.toISOString()}>
+          {new Date(frontmatter.pubDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+      </div>
 
       {frontmatter.heroImage && (
         <img
@@ -106,13 +104,9 @@ const relatedPosts = allPosts
     justify-self: start;
   }
 
-  .post-header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
   .post-category {
-    display: inline-block;
+    display: block;
+    text-align: center;
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -126,6 +120,7 @@ const relatedPosts = allPosts
   }
 
   .post-title {
+    text-align: center;
     font-size: 3rem;
     font-weight: 700;
     line-height: 1.2;
@@ -134,8 +129,10 @@ const relatedPosts = allPosts
   }
 
   .post-meta {
+    text-align: center;
     font-size: 0.9rem;
     color: var(--color-muted);
+    margin-bottom: 2rem;
   }
 
   .post-cover-image {
